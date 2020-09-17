@@ -3,24 +3,18 @@ import Message from "./components/Message";
 import FlipMove from "react-flip-move";
 import {Input, InputLabel, IconButton, FormControl} from "@material-ui/core";
 import SendIcon from '@material-ui/icons/Send';
+import firebase from "firebase";
 import Form from "./components/Form";
 import storage from "./helpers/storage";
 import scrollToEndPage from "./helpers/scrollToEndPage";
+import {db} from "./firebase";
 import './App.css';
 
 
 function App() {
   const [input, setInput] = useState('')
   const [username, setUsername] = useState('')
-  const [messages, setMessages] = useState([
-    {id: 1, username: 'Steve', text: 'Hello world'},
-    {id: 2, username: 'Mike', text: 'Hi, all'},
-    {id: 3, username: 'Макс', text: 'Hi, all'},
-    {id: 4, username: 'Steve', text: 'Hi, all'},
-    {id: 5, username: 'Макс', text: 'Hi, all'},
-    {id: 6, username: 'Mike', text: 'Hi, all'},
-    {id: 7, username: 'Макс', text: 'Hi, all'},
-  ])
+  const [messages, setMessages] = useState([])
 
   useEffect(() => {
     const STORAGE_NAME = 'username'
@@ -28,17 +22,31 @@ function App() {
     if (localeUsername) {
       setUsername(localeUsername)
     } else {
-      setUsername(prompt('Укажите свой никнейм или имя'))
+      const username = prompt('Укажите свой никнейм или имя')
+      storage(STORAGE_NAME, username)
+      setUsername(username)
     }
   }, [])
 
   useEffect(() => {
-    scrollToEndPage()
+    db.collection('messages')
+      .orderBy('timestamp')
+      .onSnapshot(snapshot => {
+        const data = snapshot.docs.map(doc => {
+          return {id: doc.id, ...doc.data()}
+        })
+        setMessages(data)
+        scrollToEndPage()
+      })
   }, [])
 
   const sendMessage = event => {
     event.preventDefault()
-    setMessages([...messages, {id: messages.length, username, text: input}])
+    db.collection('messages').add({
+      username,
+      text: input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
     setInput('')
   }
 
@@ -46,7 +54,7 @@ function App() {
     <div className="App">
       <img src={"logo.png"} alt="logo" width={100} height={100}/>
       <h1>Facebook messenger</h1>
-      <h2>Welcome {username}</h2>
+      <h2>Добро пожаловать {username}</h2>
 
       <Form onSubmit={sendMessage} className={`sendMessage__form`}>
         <FormControl className={"sendMessage_control"}>
@@ -55,7 +63,7 @@ function App() {
             id={"input"}
             type="text"
             value={input}
-            onChange={event => setInput(event.target.value)}
+            onChange={event => setInput(event.target.value.trim())}
             className={"sendMessage__input"}
           />
           <IconButton
@@ -63,7 +71,7 @@ function App() {
             disabled={!input}
             color={'primary'}
           >
-            <SendIcon />
+            <SendIcon/>
           </IconButton>
         </FormControl>
       </Form>
