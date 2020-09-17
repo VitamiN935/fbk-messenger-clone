@@ -1,4 +1,31 @@
 .App {
   text-align: center;
+  margin-top: 10px;
+  padding-bottom: 88px;
 }
 
+.sendMessage__form {
+  padding: 20px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 20px 20px 0px 20px;
+  background-color: #ece4e4;
+  z-index: 1;
+  border-radius: 5px 5px 0 0;
+}
+
+.sendMessage_control {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.sendMessage__input {
+  flex: 1;
+  margin-right: 5px;
+}
+
+.sendMessage__btn {
+  flex: 0;
+}
