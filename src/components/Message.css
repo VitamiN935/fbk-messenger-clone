@@ -1,0 +1,24 @@
+.message {
+  padding: 10px;
+  margin: 10px;
+  width: fit-content ;
+}
+
+.message__User {
+  text-align: right;
+  margin-left: auto;
+}
+
+.messageCard__user {
+  background-color: #2775e7 !important;
+  color: white !important;
+}
+
+.messageCard__quest {
+  background-color: #cdc8c8;
+}
+
+.message__Title {
+  text-align: left;
+  font-size: 14px !important;
+}
