@@ -5,10 +5,10 @@
 /.pnp
 .pnp.js
 .idea
+/src/firebase.js
 
 # testing
 /coverage
-
 # production
 /build
 
